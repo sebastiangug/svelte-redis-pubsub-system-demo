@@ -10,6 +10,7 @@
   let err: any;
   let viewers = 0;
   let donations = 0;
+  let donate_sum = 100;
 
   onMount(() => {
     socket = io("http://localhost:3000", {
@@ -43,6 +44,10 @@
 
     socket.connect();
   });
+
+  const donate = () => {
+    socket.emit("DONATION", donate_sum);
+  };
 </script>
 
 <div
@@ -62,6 +67,9 @@
     <p>Viewers: {viewers}</p>
     <p>Donations: {donations}</p>
   </div>
+
+  <input bind:value={donate_sum} />
+  <button on:click={donate}> Donate </button>
 
   {#if err}
     <div style="color: red;">
