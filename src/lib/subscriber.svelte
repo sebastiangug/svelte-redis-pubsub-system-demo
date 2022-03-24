@@ -2,6 +2,7 @@
   import { io } from "socket.io-client";
   import type { Socket } from "socket.io-client";
   import { onMount } from "svelte";
+  import { v4 as uuid } from "uuid";
 
   export let channel: string;
 
@@ -13,6 +14,7 @@
   let donate_sum = 100;
 
   onMount(() => {
+    const id = uuid();
     socket = io("http://localhost:3000", {
       host: "http://localhost",
       port: 3000,
@@ -20,6 +22,7 @@
       upgrade: true,
       extraHeaders: {
         channel,
+        id,
       },
     });
 
@@ -37,9 +40,12 @@
     });
 
     socket.on("VIEWERS", (data) => {
-      console.log("EVENT EMITTED", "VIEWERS");
+      console.log("VIEWERS EVENT FIRING", data);
+      viewers = data.viewers;
+    });
 
-      console.log(data);
+    socket.on("DONATIONS", (data) => {
+      donations = data?.donations ?? 0;
     });
 
     socket.connect();
