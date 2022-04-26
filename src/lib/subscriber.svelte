@@ -14,15 +14,15 @@
   let donate_sum = 100;
 
   onMount(() => {
-    const id = uuid();
-    socket = io("http://localhost:3000", {
-      host: "http://localhost",
-      port: 3000,
+    const device_id = `${uuid()}:6266add9b122250deb621985:VIEWER`;
+    socket = io("https://development.raiseitup.com/apis/live/gateway", {
+      path: "/apis/live/gateway",
       rememberUpgrade: true,
+      secure: true,
       upgrade: true,
       extraHeaders: {
-        channel,
-        id,
+        device_id,
+        quabity_ashuance: "tXPS9D5umW",
       },
     });
 
@@ -32,11 +32,18 @@
     });
 
     socket.io.on("close", () => {
+      console.log("close firing");
       open = false;
     });
 
     socket.io.on("error", (error) => {
       err = error as any;
+    });
+
+    socket.io.on("error", (error) => {
+      err = error;
+
+      console.log("ERROR");
     });
 
     socket.on("VIEWERS", (data) => {
@@ -46,6 +53,12 @@
 
     socket.on("DONATIONS", (data) => {
       donations = data?.donations ?? 0;
+    });
+
+    socket.on("API_ERROR", (error) => {
+      console.log("API_ERROR");
+      err = error;
+      open = false;
     });
 
     socket.connect();
@@ -79,7 +92,7 @@
 
   {#if err}
     <div style="color: red;">
-      <pre>{err}</pre>
+      <pre>{JSON.stringify(err)}</pre>
     </div>
   {/if}
 </div>

@@ -5,6 +5,11 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 export default defineConfig({
   plugins: [svelte()],
   server: {
-    port: 3500,
+    port: 5000,
+    host: "0.0.0.0",
+    https: {
+      key: "ssl/key.pem",
+      cert: "ssl/cert.pem",
+    },
   },
 });
